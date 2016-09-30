@@ -13,15 +13,52 @@ import java.util.regex.*;
 public class App
 {
     public static void main( String[] args ) throws Exception {
-        String urlContent = getUrlContent("http://www.ccib.ro/ro/CCIB/4/486/452/lista+firme+a.html");
+        //String urlContent = getUrlContent("http://www.ccib.ro/ro/CCIB/4/486/452/lista+firme+a.html");
+        //getCompanies(urlContent);
+        String company = "<p><span style=\"font-size: small;\"><strong><a href=\"http://www.axmgroup.ro\">AXM PROD'93 SRL</a></strong></span></p><p>Produce: grunduri; lacuri; vopsele, inclusiv o gama de vopsele diluabile cu apa utilizate la finisarea lemnului expus la interior si exterior.&nbsp;<em>&nbsp;</em></p><p><em>tel: 021.316.07.09<br /></em><em>e-mail: <span style=\"text-decoration: underline;\"><a href=\"mailto:office@axmgroup.ro;\">office@axmgroup.ro</a></span>;</em><em>&nbsp;<br /></em><em><span style=\"text-decoration: underline;\"><a href=\"http://www.axmgroup.ro/\">www.axmgroup.ro</a></span></em><em>&nbsp;<br /></em></p><hr />";
+        Pattern companyHref = Pattern.compile("<a href=\"(.*?)\">(.*?)</a>.*?<p>(.*?)</p>.*?");
+        Matcher matcherHref = companyHref.matcher(company);
+
+        matcherHref.find();
+        String href = matcherHref.group(1);
+        String title = matcherHref.group(2);
+        String description = matcherHref.group(3);
+        System.out.println(href);
+        System.out.println(title);
+        System.out.println(description);
+
+        Pattern telPattern = Pattern.compile("tel: (.*?)<");
+        Matcher telMatcher = telPattern.matcher(company);
+
+        String phones;
+        if(telMatcher.find()) phones = telMatcher.group(1);
+
+        Pattern emailPattern = Pattern.compile("mailto:(.*?)\"");
+        Matcher emailMatcher = emailPattern.matcher(company);
+        String mails = "";
+        while(emailMatcher.find()) mails = mails + emailMatcher.group(1);
+
+        /*
+        if(matcherHref.find()) {
+            System.out.println(matcherHref.group(0));
+            System.out.println(matcherHref.group(1));
+            System.out.println(matcherHref.group(2));
+            System.out.println(matcherHref.group(3));
+        } else {
+            System.out.println("not found");
+        }
+        */
+    }
+
+    public static void getCompanies(String content) {
         String pattern  = "(<hr />|(?<=<hr />)).*?(<hr />|</div>)";
         Pattern hrPattern = Pattern.compile(pattern, Pattern.MULTILINE | Pattern.DOTALL);
-        Matcher m = hrPattern.matcher(urlContent);
+        Matcher m = hrPattern.matcher(content);
 
         while(m.find()) {
             System.out.println("...");
             System.out.println("...");
-            System.out.println(urlContent.substring(m.start(), m.end()));
+            System.out.println(content.substring(m.start(), m.end()));
         }
     }
 

@@ -4,7 +4,10 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
 import java.net.URL;
-import java.util.regex.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Hello world!
@@ -48,6 +51,16 @@ public class App
             System.out.println("not found");
         }
         */
+    }
+
+    public static List<String> getListaFirme(String content) {
+        ArrayList<String> lst = new ArrayList<String>(26);
+        Pattern contiguosList = Pattern.compile("<ul class=.*</ul>", Pattern.MULTILINE | Pattern.DOTALL);
+        Matcher contiguosMatcher = contiguosList.matcher(content);
+        contiguousMatcher.find();
+        System.out.println(contiguousMatcher.group(0));
+
+        return lst;
     }
 
     public static void getCompanies(String content) {

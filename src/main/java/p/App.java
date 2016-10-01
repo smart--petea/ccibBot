@@ -9,6 +9,10 @@ import java.util.regex.Matcher;
 import java.util.List;
 import java.util.LinkedList;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+
 /**
  * Hello world!
  *
@@ -40,7 +44,7 @@ public class App
         Matcher matcherPhones = phonesPattern.matcher(content);
 
         if(matcherPhones.find()) return matcherPhones.group("phones");
-        return ""; 
+        return "";
     }
 
     public static String getMails(String content) {
@@ -48,23 +52,31 @@ public class App
 
         String mails = "";
         while(matcherEmail.find()) mails = mails + matcherEmail.group("mail");
-        
-        return mails; 
+
+        return mails;
     }
 
 
     public static void main( String[] args ) throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("bot");
+        EntityManager em = emf.createEntityManager();
+
         String aUrl = "http://www.ccib.ro/ro/CCIB/4/486/452/lista+firme+a.html";
-        //processUrl(aUrl);
-        /*
+        processUrl(aUrl, em);
         List<String> firmeList = getListaFirme(aUrl);
-        for(String firma : firmeList) {
-            System.out.println(firma);
+        for(String firmaUrl : firmeList) {
+            processUrl(firmaUrl, em);
         }
-        */
+
+        em.close();
+        emf.close();
     }
 
-    public static void processUrl(String url) throws Exception {
+    public static void processUrl(String url, EntityManager em) throws Exception {
+        System.out.println("Processing - " + url);
+
+        em.getTransaction().begin();
+
         for(String company: getCompanies(getUrlContent(url))) {
             //String company = "<p><span style=\"font-size: small;\"><strong><a href=\"http://www.axmgroup.ro\">AXM PROD'93 SRL</a></strong></span></p><p>Produce: grunduri; lacuri; vopsele, inclusiv o gama de vopsele diluabile cu apa utilizate la finisarea lemnului expus la interior si exterior.&nbsp;<em>&nbsp;</em></p><p><em>tel: 021.316.07.09<br /></em><em>e-mail: <span style=\"text-decoration: underline;\"><a href=\"mailto:office@axmgroup.ro;\">office@axmgroup.ro</a></span>;</em><em>&nbsp;<br /></em><em><span style=\"text-decoration: underline;\"><a href=\"http://www.axmgroup.ro/\">www.axmgroup.ro</a></span></em><em>&nbsp;<br /></em></p><hr />";
             System.out.println("href = " + getHref(company));
@@ -72,6 +84,8 @@ public class App
             System.out.println("phones = " + getPhones(company));
             System.out.println("mails = " + getMails(company));
         }
+
+        em.getTransaction().commit();
     }
 
     public static List<String> getListaFirme(String url) throws Exception {
@@ -81,7 +95,7 @@ public class App
         Pattern contiguosList = Pattern.compile("<ul class=(?<firme>.*?)</ul>", Pattern.MULTILINE | Pattern.DOTALL);
         Matcher contiguosMatcher = contiguosList.matcher(content);
         contiguosMatcher.find();
-        
+
         Matcher firmaMatcher = firmaPattern.matcher(contiguosMatcher.group("firme"));
         while(firmaMatcher.find()) {
             lstt.push(firmaMatcher.group("firma"));

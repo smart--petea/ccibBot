@@ -15,9 +15,11 @@ import java.util.ArrayList;
  */
 public class App
 {
+    //patterns
     private static Pattern hrefPattern = Pattern.compile("p.*?strong.*?<a href=\"(?<href>.*?)\"");
     private static Pattern titlePattern = Pattern.compile("p.*?strong.*?>(?<title>[^>]+?)</");
     private static Pattern phonesPattern = Pattern.compile("tel: (?<phones>.*?)<");
+    private static Pattern emailPattern = Pattern.compile("mailto:(?<mail>.*?)\"");
 
     public static String getHref(String content) {
         Matcher matcherHref = hrefPattern.matcher(content);
@@ -40,37 +42,26 @@ public class App
         return ""; 
     }
 
-    public static void main( String[] args ) throws Exception {
-        //String urlContent = getUrlContent("http://www.ccib.ro/ro/CCIB/4/486/452/lista+firme+a.html");
-        //getCompanies(urlContent);
-        String company = "<p><span style=\"font-size: small;\"><strong><a href=\"http://www.axmgroup.ro\">AXM PROD'93 SRL</a></strong></span></p><p>Produce: grunduri; lacuri; vopsele, inclusiv o gama de vopsele diluabile cu apa utilizate la finisarea lemnului expus la interior si exterior.&nbsp;<em>&nbsp;</em></p><p><em>tel: 021.316.07.09<br /></em><em>e-mail: <span style=\"text-decoration: underline;\"><a href=\"mailto:office@axmgroup.ro;\">office@axmgroup.ro</a></span>;</em><em>&nbsp;<br /></em><em><span style=\"text-decoration: underline;\"><a href=\"http://www.axmgroup.ro/\">www.axmgroup.ro</a></span></em><em>&nbsp;<br /></em></p><hr />";
+    public static String getMails(String content) {
+        Matcher matcherEmail = emailPattern.matcher(content);
+
+        String mails = "";
+        while(matcherEmail.find()) mails = mails + matcherEmail.group("mail");
+        
+        return mails; 
+    }
+
+    public static void processFragment(String company) {
+        //String company = "<p><span style=\"font-size: small;\"><strong><a href=\"http://www.axmgroup.ro\">AXM PROD'93 SRL</a></strong></span></p><p>Produce: grunduri; lacuri; vopsele, inclusiv o gama de vopsele diluabile cu apa utilizate la finisarea lemnului expus la interior si exterior.&nbsp;<em>&nbsp;</em></p><p><em>tel: 021.316.07.09<br /></em><em>e-mail: <span style=\"text-decoration: underline;\"><a href=\"mailto:office@axmgroup.ro;\">office@axmgroup.ro</a></span>;</em><em>&nbsp;<br /></em><em><span style=\"text-decoration: underline;\"><a href=\"http://www.axmgroup.ro/\">www.axmgroup.ro</a></span></em><em>&nbsp;<br /></em></p><hr />";
         System.out.println("href = " + getHref(company));
         System.out.println("title = " + getTitle(company));
         System.out.println("phones = " + getPhones(company));
+        System.out.println("mails = " + getMails(company));
+    }
 
-        /*
-        Matcher telMatcher = telPattern.matcher(company);
-
-        String phones = "";
-        if(telMatcher.find()) phones = telMatcher.group(1); System.out.println("phones " + phones);
-
-        Pattern emailPattern = Pattern.compile("mailto:(.*?)\"");
-        Matcher emailMatcher = emailPattern.matcher(company);
-        String mails = "";
-        while(emailMatcher.find()) mails = mails + emailMatcher.group(1);
-        System.out.println("mails " + mails);
-        */
-
-        /*
-        if(matcherHref.find()) {
-            System.out.println(matcherHref.group(0));
-            System.out.println(matcherHref.group(1));
-            System.out.println(matcherHref.group(2));
-            System.out.println(matcherHref.group(3));
-        } else {
-            System.out.println("not found");
-        }
-        */
+    public static void main( String[] args ) throws Exception {
+        //String urlContent = getUrlContent("http://www.ccib.ro/ro/CCIB/4/486/452/lista+firme+a.html");
+        //getCompanies(urlContent);
     }
 
     /*

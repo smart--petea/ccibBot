@@ -13,6 +13,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import p.entities.Company;
+
 /**
  * Hello world!
  *
@@ -78,11 +80,12 @@ public class App
         em.getTransaction().begin();
 
         for(String company: getCompanies(getUrlContent(url))) {
-            //String company = "<p><span style=\"font-size: small;\"><strong><a href=\"http://www.axmgroup.ro\">AXM PROD'93 SRL</a></strong></span></p><p>Produce: grunduri; lacuri; vopsele, inclusiv o gama de vopsele diluabile cu apa utilizate la finisarea lemnului expus la interior si exterior.&nbsp;<em>&nbsp;</em></p><p><em>tel: 021.316.07.09<br /></em><em>e-mail: <span style=\"text-decoration: underline;\"><a href=\"mailto:office@axmgroup.ro;\">office@axmgroup.ro</a></span>;</em><em>&nbsp;<br /></em><em><span style=\"text-decoration: underline;\"><a href=\"http://www.axmgroup.ro/\">www.axmgroup.ro</a></span></em><em>&nbsp;<br /></em></p><hr />";
-            System.out.println("href = " + getHref(company));
-            System.out.println("title = " + getTitle(company));
-            System.out.println("phones = " + getPhones(company));
-            System.out.println("mails = " + getMails(company));
+            Company cmp = new Company();
+            cmp.setHref(getHref(company));
+            cmp.setTitle(getTitle(company));
+            cmp.setPhones(getPhones(company));
+            cmp.setMails(getMails(company));
+            em.persist(cmp);
         }
 
         em.getTransaction().commit();

@@ -15,11 +15,20 @@ import java.util.ArrayList;
  */
 public class App
 {
-    private static Pattern hrefPattern = Pattern.compile("p.*strong.*<a href=\"(?<href>.*?)\"");
+    private static Pattern hrefPattern = Pattern.compile("p.*?strong.*?<a href=\"(?<href>.*?)\"");
+    private static Pattern titlePattern = Pattern.compile("p.*?strong.*?>(?<title>[^>]+?)</");
+
     public static String getHref(String content) {
         Matcher matcherHref = hrefPattern.matcher(content);
 
         if(matcherHref.find()) return matcherHref.group("href");
+        return "";
+    }
+
+    public static String getTitle(String content) {
+        Matcher matcherTitle = titlePattern.matcher(content);
+
+        if(matcherTitle.find()) return matcherTitle.group("title");
         return "";
     }
 
@@ -28,6 +37,7 @@ public class App
         //getCompanies(urlContent);
         String company = "<p><span style=\"font-size: small;\"><strong><a href=\"http://www.axmgroup.ro\">AXM PROD'93 SRL</a></strong></span></p><p>Produce: grunduri; lacuri; vopsele, inclusiv o gama de vopsele diluabile cu apa utilizate la finisarea lemnului expus la interior si exterior.&nbsp;<em>&nbsp;</em></p><p><em>tel: 021.316.07.09<br /></em><em>e-mail: <span style=\"text-decoration: underline;\"><a href=\"mailto:office@axmgroup.ro;\">office@axmgroup.ro</a></span>;</em><em>&nbsp;<br /></em><em><span style=\"text-decoration: underline;\"><a href=\"http://www.axmgroup.ro/\">www.axmgroup.ro</a></span></em><em>&nbsp;<br /></em></p><hr />";
         System.out.println("href = " + getHref(company));
+        System.out.println("title = " + getTitle(company));
 
         //String title = matcherHref.group("title");
         //System.out.println("title : " + title);

@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -21,6 +20,7 @@ public class App
     private static Pattern titlePattern = Pattern.compile("p.*?strong.*?>(?<title>[^>]+?)</");
     private static Pattern phonesPattern = Pattern.compile("tel: (?<phones>.*?)<");
     private static Pattern emailPattern = Pattern.compile("mailto:(?<mail>.*?)\"");
+    private static Pattern firmaPattern = Pattern.compile("href=\"(?<firma>.*?)\"");
 
     public static String getHref(String content) {
         Matcher matcherHref = hrefPattern.matcher(content);
@@ -54,8 +54,14 @@ public class App
 
 
     public static void main( String[] args ) throws Exception {
-        String url = "http://www.ccib.ro/ro/CCIB/4/486/452/lista+firme+a.html";
-        //processUrl(url);
+        String aUrl = "http://www.ccib.ro/ro/CCIB/4/486/452/lista+firme+a.html";
+        //processUrl(aUrl);
+        /*
+        List<String> firmeList = getListaFirme(aUrl);
+        for(String firma : firmeList) {
+            System.out.println(firma);
+        }
+        */
     }
 
     public static void processUrl(String url) throws Exception {
@@ -68,17 +74,21 @@ public class App
         }
     }
 
-    /*
-    public static List<String> getListaFirme(String content) {
-        ArrayList<String> lst = new ArrayList<String>(26);
-        Pattern contiguosList = Pattern.compile("<ul class=.*</ul>", Pattern.MULTILINE | Pattern.DOTALL);
-        Matcher contiguosMatcher = contiguosList.matcher(content);
-        contiguousMatcher.find();
-        System.out.println(contiguousMatcher.group(0));
+    public static List<String> getListaFirme(String url) throws Exception {
+        String content = getUrlContent(url);
+        LinkedList<String> lstt = new LinkedList<String>();
 
-        return lst;
+        Pattern contiguosList = Pattern.compile("<ul class=(?<firme>.*?)</ul>", Pattern.MULTILINE | Pattern.DOTALL);
+        Matcher contiguosMatcher = contiguosList.matcher(content);
+        contiguosMatcher.find();
+        
+        Matcher firmaMatcher = firmaPattern.matcher(contiguosMatcher.group("firme"));
+        while(firmaMatcher.find()) {
+            lstt.push(firmaMatcher.group("firma"));
+        }
+
+        return lstt;
     }
-    */
 
     public static List<String> getCompanies(String content) {
         LinkedList<String> lstt = new LinkedList<String>();
